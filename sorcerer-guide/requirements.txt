@@ -3,3 +3,6 @@ certifi==2020.4.5.1
 numpy==1.18.5
 Pillow==7.1.2
 six==1.15.0
+Terminal
+windows-curses
+curses

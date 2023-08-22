@@ -6,10 +6,10 @@ import pickle
 from PIL import Image
 from blessings import Terminal
 
-def init_argparse() -> argpars.ArgumentParser:
+def init_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-            prog="python asciiart.py",
-            usage="%(prog)s --file 'sample.jpg' -c -m 'lightness' -u -width 80 -scale 2",
+            prog="python 0x01-original.py",
+            usage="%(prog)s --file 'sample.png' -c -m 'lightness' -u -width 80 -scale 2",
             description="""Print ASCII art to the terminal from image. If no file is specified,        
                            tries to take webcam image using imagesnap if installed.
                         """
@@ -35,8 +35,12 @@ def init_argparse() -> argpars.ArgumentParser:
             help="univert pixel density (useful for light backgrounds)"
     )
     parser.add_argument(
-            "-width", type=int, action="store", default=2, choices=range(1,4),
-            help="scale width by factor of 1, 2, or 3 (default=2)"
+            "-width", type=int, action="store", default=50, choices=range(1,100),
+            help="scale width by factor of 1, 2, 3 to 100 (default=50)"
+    )
+    parser.add_argument(
+            "-scale", type=int, action="store", default=2, choices=range(1,4),
+            help="scale within by factor of 1, 2, or 3 (default=2)"
     )
     return parser
 
@@ -109,7 +113,7 @@ def snapshot():
                         """)
 # 2D list of characters from 2D RGB array
 def character_map(imarray, method, invert):
-    value = simple_value(imarray, method)
+    value = single_value(imarray, method)
     return [[get_char(pixel, invert) for pixel in row] for row in value]
 
 # Add ANSI color escapes to string
@@ -139,12 +143,12 @@ def main():
     args = parser.parse_args()
     if args.file == None:
         snapshot()
-        filename = "" # Paste the name of the image (file extension "****.jpg") here
+        filename = "sample.png" # Paste the name of the image (file extension "****.jpg") here
     else:
         args.file.close()
         filename = args.file.name
     imarray = initial_process(filename, args.width)
-    invert = not args.uninvert
+    invert = not args.univert
     character_array = character_map(imarray, args.method, invert)
     if args.color == True:
         color_array = color_mask(imarray)
